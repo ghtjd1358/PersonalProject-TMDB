@@ -1,6 +1,7 @@
-// moviesSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+
+const API_KEY = '95cf4754aa20e43e9a9c24ba6ab4df52';
 
 interface Movie {
   id: number;
@@ -13,6 +14,7 @@ interface Movie {
 }
 
 interface MoviesState {
+  selectedFilter: 'popularity' | 'release_date' | 'vote_average';
   movies: Movie[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string | null;
@@ -20,24 +22,34 @@ interface MoviesState {
 }
 
 const initialState: MoviesState = {
+  selectedFilter: 'popularity',
   movies: [],
   status: 'idle',
   page: 0,
   error: null,
 };
 
-export const fetchMovies = createAsyncThunk('movies/fetchMovies', async (_, { getState }) => {
-  const state = getState() as { movies: MoviesState };
-  const page = state.movies.page + 1;
-  const API_KEY = '95cf4754aa20e43e9a9c24ba6ab4df52';
-  const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR&page=${page}`);
-  return { results: response.data.results, page };
-});
+export const fetchMovies = createAsyncThunk(
+  'movies/fetchMovies',
+  async (filter: 'popularity' | 'release_date' | 'vote_average', { getState }) => {
+    const state = getState() as { movies: MoviesState };
+    const page = state.movies.page + 1;
+    const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=${filter}.desc&page=${page}&language=ko-KR`;
+    const response = await axios.get(url);
+    return { results: response.data.results, page };
+  }
+);
 
 const moviesSlice = createSlice({
   name: 'movies',
   initialState,
-  reducers: {},
+  reducers: {
+    setFilter(state, action) {
+      state.selectedFilter = action.payload;
+      state.page = 0;
+      state.movies = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMovies.pending, (state) => {
@@ -55,4 +67,5 @@ const moviesSlice = createSlice({
   },
 });
 
+export const { setFilter } = moviesSlice.actions;
 export default moviesSlice.reducer;

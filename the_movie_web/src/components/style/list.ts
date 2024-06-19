@@ -10,7 +10,14 @@ export const MovieContainer = styled.div`
 
 export const MovieCard = styled.div`
   margin: 10px;
-  width: 200px;
+  padding: 15px;
+  width: 260px;
+  height: 390px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
 `;
 
 export const MovieTitle = styled.h3`
@@ -19,7 +26,7 @@ export const MovieTitle = styled.h3`
 
 export const MovieImage = styled.img`
   width: 100%;
-  height: auto;
+  height: 70%;
 `;
 
 export const MovieReleaseDate = styled.p`
@@ -28,10 +35,18 @@ export const MovieReleaseDate = styled.p`
 `;
 
 export const LoadMoreButton = styled.button`
+  width: 90%;
+  color: #fff;
+  background-color: #3c6bca;
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
   font-size: 1em;
+  font-weight: bold;
+
+  &:hover{
+    background-color: #052362
+  }
 `;
 
 export const FilterButton = styled.button`

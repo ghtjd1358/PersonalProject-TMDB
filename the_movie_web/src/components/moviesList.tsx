@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
 import { fetchMovies } from '../store/movies/moviesSlice';
+import { setFilter } from '../store/movies/filterSlice';
 import {
   MovieContainer,
   MovieCard,
@@ -11,37 +12,52 @@ import {
   LoadMoreButton,
 } from '../components/style/list';
 
-const MovieList: React.FC = () => {
+interface MovieListProps {
+  searchQuery: string;
+}
+
+const MovieList: React.FC<MovieListProps> = ({ searchQuery }) => {
   const dispatch = useDispatch();
   const movies = useSelector((state: RootState) => state.movies.movies);
-  const searchResults = useSelector((state: RootState) => state.search.movies); 
   const status = useSelector((state: RootState) => state.movies.status);
-  const searchStatus = useSelector((state: RootState) => state.search.status); 
   const error = useSelector((state: RootState) => state.movies.error);
+  const selectedFilter = useSelector((state: RootState) => state.movies.selectedFilter);
+  const searchResults = useSelector((state: RootState) => state.search.movies);
 
-  // 초기 영화 목록을 불러오는 로직
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchMovies());
+      dispatch(fetchMovies(selectedFilter));
     }
-  }, [status, dispatch]);
+  }, [status, dispatch, selectedFilter]);
 
   const handleLoadMore = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (status === 'succeeded') {
-      dispatch(fetchMovies());
+      dispatch(fetchMovies(selectedFilter));
     }
   };
 
-  const moviesToDisplay = searchResults.length > 0 ? searchResults : movies;
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const filter = event.target.value as 'popularity' | 'release_date' | 'vote_average';
+    dispatch(setFilter(filter));
+    dispatch(fetchMovies(filter));
+  };
 
   return (
     <div>
+      <div>
+        <label htmlFor="filter">Filter by:</label>
+        <select id="filter" value={selectedFilter} onChange={handleFilterChange}>
+          <option value="popularity">Popularity</option>
+          <option value="release_date">Release Date</option>
+          <option value="vote_average">Vote Average</option>
+        </select>
+      </div>
       {status === 'loading' && <div>Loading...</div>}
       {status === 'failed' && <div>Error: {error}</div>}
-      {(status === 'succeeded' || searchStatus === 'succeeded') && (
+      {status === 'succeeded' && (
         <MovieContainer>
-          {moviesToDisplay.map(movie => (
+          {(searchQuery ? searchResults : movies).map((movie) => (
             <MovieCard key={movie.id}>
               <MovieImage
                 src={`http://image.tmdb.org/t/p/w300${movie.poster_path}`}
@@ -61,6 +77,6 @@ const MovieList: React.FC = () => {
       </LoadMoreButton>
     </div>
   );
-}
+};
 
 export default MovieList;
