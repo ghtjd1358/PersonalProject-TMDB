@@ -1,6 +1,8 @@
+import Footer from './components/Footer';
 import Header from './components/Header';
 import MoviesList from './components/moviesList';
 import SearchBar from './components/SearchBar';
+
 
 function App() {
 
@@ -9,6 +11,7 @@ function App() {
       <Header />
       <SearchBar />
       <MoviesList />
+      <Footer />
     </div>
   );
 }

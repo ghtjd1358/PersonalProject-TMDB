@@ -27,6 +27,7 @@ export const MovieTitle = styled.h3`
 export const MovieImage = styled.img`
   width: 100%;
   height: 70%;
+  border-radius: 5px;
 `;
 
 export const MovieReleaseDate = styled.p`
@@ -48,6 +49,12 @@ export const LoadMoreButton = styled.button`
     background-color: #052362
   }
 `;
+
+export const FilterContainer = styled.div`
+  display: flex;
+  margin: 10px;
+  justify-content: center;
+`
 
 export const FilterButton = styled.button`
   margin: 5px;

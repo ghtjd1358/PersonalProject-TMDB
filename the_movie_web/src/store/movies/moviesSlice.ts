@@ -36,6 +36,7 @@ export const fetchMovies = createAsyncThunk(
     const page = state.movies.page + 1;
     const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=${filter}.desc&page=${page}&language=ko-KR`;
     const response = await axios.get(url);
+    console.log(response.data.results)
     return { results: response.data.results, page };
   }
 );

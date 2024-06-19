@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store/store';
-import { fetchMovies } from '../store/movies/moviesSlice';
-import { setFilter } from '../store/movies/filterSlice';
+import { fetchMovies, setFilter } from '../store/movies/moviesSlice';
 import {
   MovieContainer,
   MovieCard,
@@ -10,13 +9,15 @@ import {
   MovieImage,
   MovieReleaseDate,
   LoadMoreButton,
+  FilterButton,
+  FilterContainer
 } from '../components/style/list';
 
 interface MovieListProps {
   searchQuery: string;
 }
 
-const MovieList: React.FC<MovieListProps> = ({ searchQuery }) => {
+const MovieList: React.FC<MovieListProps> = () => {
   const dispatch = useDispatch();
   const movies = useSelector((state: RootState) => state.movies.movies);
   const status = useSelector((state: RootState) => state.movies.status);
@@ -24,12 +25,14 @@ const MovieList: React.FC<MovieListProps> = ({ searchQuery }) => {
   const selectedFilter = useSelector((state: RootState) => state.movies.selectedFilter);
   const searchResults = useSelector((state: RootState) => state.search.movies);
 
+  // 영화 목록 나열
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchMovies(selectedFilter));
+      dispatch(fetchMovies(movies));
     }
-  }, [status, dispatch, selectedFilter]);
+  }, [status, dispatch, movies]);
 
+  // Load More 
   const handleLoadMore = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (status === 'succeeded') {
@@ -37,27 +40,27 @@ const MovieList: React.FC<MovieListProps> = ({ searchQuery }) => {
     }
   };
 
-  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const filter = event.target.value as 'popularity' | 'release_date' | 'vote_average';
+  // 영화 필터 
+  const handleFilterChange = (filter: 'popularity' | 'release_date' | 'vote_average') => {
     dispatch(setFilter(filter));
     dispatch(fetchMovies(filter));
   };
 
+  const moviesToDisplay = searchResults.length > 0 ? searchResults : movies;
+
   return (
     <div>
-      <div>
-        <label htmlFor="filter">Filter by:</label>
-        <select id="filter" value={selectedFilter} onChange={handleFilterChange}>
-          <option value="popularity">Popularity</option>
-          <option value="release_date">Release Date</option>
-          <option value="vote_average">Vote Average</option>
-        </select>
-      </div>
+      <FilterContainer>
+        <label></label>
+        <FilterButton  onClick={() => handleFilterChange('popularity')} disabled={selectedFilter === 'popularity'}>인기순</FilterButton>
+        <FilterButton  onClick={() => handleFilterChange('release_date')} disabled={selectedFilter === 'release_date'}>최신순</FilterButton>
+        <FilterButton  onClick={() => handleFilterChange('vote_average')} disabled={selectedFilter === 'vote_average'}>평점순</FilterButton>
+      </FilterContainer>
       {status === 'loading' && <div>Loading...</div>}
       {status === 'failed' && <div>Error: {error}</div>}
       {status === 'succeeded' && (
         <MovieContainer>
-          {(searchQuery ? searchResults : movies).map((movie) => (
+          {moviesToDisplay.map(movie => (
             <MovieCard key={movie.id}>
               <MovieImage
                 src={`http://image.tmdb.org/t/p/w300${movie.poster_path}`}
@@ -65,6 +68,7 @@ const MovieList: React.FC<MovieListProps> = ({ searchQuery }) => {
               />
               <MovieTitle>{movie.title}</MovieTitle>
               <MovieReleaseDate>{movie.release_date}</MovieReleaseDate>
+              <p>평점 : {movie.vote_average}</p>
             </MovieCard>
           ))}
         </MovieContainer>

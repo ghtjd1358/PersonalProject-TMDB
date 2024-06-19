@@ -5,7 +5,7 @@ const FooterContainer = styled.footer`
   padding: 20px;
   text-align: center;
   color: white;
-  position: fixed;
+  /* position: fixed; */
   width: 100%;
   bottom: 0;
 `;
