@@ -1,19 +1,20 @@
-import Footer from './components/Footer';
-import Header from './components/Header';
-import MoviesList from './components/moviesList';
-import SearchBar from './components/SearchBar';
-
+import { Route, Routes } from 'react-router-dom';
+import Layout from './Layout';
+import MovieListPage from './page/MovieListPage';
+import MovieDetailPage from './page/MoviesDetailPage';
 
 function App() {
-
   return (
-    <div className="App">
-      <Header />
-      <SearchBar />
-      <MoviesList />
-      <Footer />
-    </div>
+    <Routes>
+        <Route element={<Layout />}>
+          <Route path='/' element={<MovieListPage />} />
+          <Route path="/movie/:id" element={<MovieDetailPage />} />
+        </Route>
+    </Routes>
   );
 }
 
 export default App;
+
+
+

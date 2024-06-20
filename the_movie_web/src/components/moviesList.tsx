@@ -11,7 +11,8 @@ import {
   LoadMoreButton,
   FilterButton,
   FilterContainer
-} from '../components/style/list';
+} from './style/list';
+import { Link } from 'react-router-dom';
 
 interface MovieListProps {
   searchQuery: string;
@@ -61,15 +62,17 @@ const MovieList: React.FC<MovieListProps> = () => {
       {status === 'succeeded' && (
         <MovieContainer>
           {moviesToDisplay.map(movie => (
+            <Link to={`/movie/${movie.id}`} key={movie.id}>
             <MovieCard key={movie.id}>
               <MovieImage
                 src={`http://image.tmdb.org/t/p/w300${movie.poster_path}`}
                 alt={movie.title}
               />
               <MovieTitle>{movie.title}</MovieTitle>
-              <MovieReleaseDate>{movie.release_date}</MovieReleaseDate>
+              <MovieReleaseDate>개봉일 : {movie.release_date}</MovieReleaseDate>
               <p>평점 : {movie.vote_average}</p>
             </MovieCard>
+            </Link>
           ))}
         </MovieContainer>
       )}

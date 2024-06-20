@@ -1,4 +1,3 @@
-//SearchBar.tsx
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { searchMovies } from '../store/movies/searchSlice';
@@ -31,9 +30,9 @@ const SearchBar: React.FC = () => {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyPress={handleKeyPress}
-        placeholder="Search for movies..."
+        placeholder="원하는 영화를 검색하세요"
       />
-      <Button onClick={handleSearch}>Search</Button>
+      <Button onClick={handleSearch}>검색</Button>
     </SearchBarContainer>
   );
 };
